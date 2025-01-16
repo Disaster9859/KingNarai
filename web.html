@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Location Finder</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #d61a1a;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, button, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #036ad8;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border: 1px solid #d4edda;
+            border-radius: 5px;
+            color: #155724;
+        }
+        .image {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .image img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ค้นหาสถานที่สำหรับคนไข้</h2>
+    <div class="form-group">
+        <label for="treatment">กรุณาเลือกประเภทการรักษา:</label>
+        <select id="treatment">
+            <option value="">-- เลือกประเภทการรักษา --</option>
+            <option value="ดวงตา">ดวงตา</option>
+            <option value="หู คอ จมูก">หู คอ จมูก</option>
+            <option value="กระดูก">กระดูก</option>
+            <option value="ผิวหนัง">ผิวหนัง</option>
+        </select>
+    </div>
+    <button id="findLocation">ค้นหาสถานที่</button>
+
+    <div id="result" class="result" style="display: none;"></div>
+    <div id="image" class="image" style="display: none;"></div>
+
+    <div id="feedback" style="display: none; margin-top: 20px;">
+        <h3>แบบประเมินความพึงพอใจ</h3>
+        <label for="feedbackInput">กรุณาให้คะแนนความพึงพอใจ (1-5):</label>
+        <textarea id="feedbackInput" rows="4" placeholder="กรอกความคิดเห็นหรือคะแนนความพึงพอใจของคุณ..."></textarea>
+        <button id="submitFeedback">ส่งความคิดเห็น</button>
+        <div id="feedbackMessage" class="result" style="display: none; margin-top: 15px;"></div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('findLocation').addEventListener('click', function() {
+        const treatment = document.getElementById('treatment').value;
+        const resultDiv = document.getElementById('result');
+        const imageDiv = document.getElementById('image');
+        const feedbackDiv = document.getElementById('feedback');
+
+        if (!treatment) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.backgroundColor = '#f8d7da';
+            resultDiv.style.color = '#721c24';
+            resultDiv.innerText = 'กรุณาเลือกประเภทการรักษา';
+            imageDiv.style.display = 'none';
+            feedbackDiv.style.display = 'none';
+            return;
+        }
+
+        let location = '';
+        let imageUrl = '';
+        switch (treatment) {
+            case 'ดวงตา':
+                location = 'ชั้น 2 ห้อง 205';
+                imageUrl = 'https://via.placeholder.com/400x200?text=Eye+Clinic';
+                break;
+            case 'หู คอ จมูก':
+                location = 'ชั้น 3 ห้อง 305';
+                imageUrl = 'https://via.placeholder.com/400x200?text=ENT+Clinic';
+                break;
+            case 'กระดูก':
+                location = 'ชั้น 4 ห้อง 405';
+                imageUrl = 'https://via.placeholder.com/400x200?text=Bone+Clinic';
+                break;
+            case 'ผิวหนัง':
+                location = 'ชั้น 5 ห้อง 505';
+                imageUrl = 'https://via.placeholder.com/400x200?text=Skin+Clinic';
+                break;
+            default:
+                location = 'ไม่พบข้อมูลสถานที่';
+        }
+
+        resultDiv.style.display = 'block';
+        resultDiv.style.backgroundColor = '#e9f7ef';
+        resultDiv.style.color = '#155724';
+        resultDiv.innerText = `สำหรับการรักษา${treatment} กรุณาไปที่: ${location}`;
+
+        imageDiv.style.display = 'block';
+        imageDiv.innerHTML = `<img src="${imageUrl}" alt="Image for ${treatment}">`;
+
+        feedbackDiv.style.display = 'block';
+    });
+
+    document.getElementById('submitFeedback').addEventListener('click', function() {
+        const feedbackInput = document.getElementById('feedbackInput').value;
+        const feedbackMessage = document.getElementById('feedbackMessage');
+
+        if (!feedbackInput.trim()) {
+            feedbackMessage.style.display = 'block';
+            feedbackMessage.style.backgroundColor = '#f8d7da';
+            feedbackMessage.style.color = '#721c24';
+            feedbackMessage.innerText = 'กรุณากรอกความคิดเห็นหรือคะแนน';
+            return;
+        }
+
+        feedbackMessage.style.display = 'block';
+        feedbackMessage.style.backgroundColor = '#e9f7ef';
+        feedbackMessage.style.color = '#155724';
+        feedbackMessage.innerText = 'ขอบคุณสำหรับความคิดเห็นของคุณ!';
+
+        document.getElementById('feedbackInput').value = '';
+    });
+
+    // Registering service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log('Service Worker Registered'))
+            .catch(err => console.error('Service Worker registration failed:', err));
+    }
+</script>
+
+</body>
+</html>
